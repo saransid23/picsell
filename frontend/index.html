@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Picsell — Professional Photo Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body class="milky-white-theme">
+
+
+<div class="app-container">
+
+  <!-- Top Bar -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M12 2a7 7 0 1 0 7 7"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </div>
+      <div class="brand-name">
+        <span class="brand-title">Picsell</span>
+        <span class="brand-tag">PRESET STUDIO</span>
+      </div>
+    </div>
+
+    <div class="topbar-actions">
+      <label class="btn btn-secondary" for="file-input" title="Upload new photo (or drag into viewport)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Upload Photo</span>
+        <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" hidden>
+      </label>
+
+      <button class="btn btn-secondary" id="compare-toggle-btn" disabled title="Toggle original vs edited photo (or hold Spacebar)">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8L22 12L18 16"/><path d="M6 8L2 12L6 16"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+        <span id="compare-btn-label">Compare Original</span>
+      </button>
+
+      <button class="btn btn-primary" id="download-btn" disabled title="Download full-resolution edited image">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Export Photo</span>
+      </button>
+
+      <button class="settings-toggle" id="settings-toggle" title="Backend Server Settings" aria-label="Server settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Settings dropdown drawer -->
+  <div class="settings-panel" id="settings-panel" hidden>
+    <div class="settings-content">
+      <div class="settings-header">
+        <h3>Backend API Settings</h3>
+        <button class="icon-close" id="settings-close">&times;</button>
+      </div>
+      <div class="settings-body">
+        <label for="api-base-input">Server Base URL</label>
+        <div class="input-group">
+          <input type="text" id="api-base-input" placeholder="http://localhost:5000">
+          <button class="btn btn-primary btn-small" id="settings-save">Save & Connect</button>
+        </div>
+        <span class="settings-status" id="settings-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Workspace -->
+  <main class="workspace">
+
+    <!-- Preset Rail (Left Sidebar) -->
+    <aside class="preset-rail">
+      <div class="rail-header">
+        <div class="rail-title-row">
+          <h2>Presets</h2>
+          <span class="preset-count-badge" id="preset-count-badge">108</span>
+        </div>
+        <div class="search-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="preset-search-input" placeholder="Search presets (e.g. Kodachrome, Teal...)" />
+          <button class="search-clear" id="search-clear-btn" hidden>&times;</button>
+        </div>
+        <div class="rail-tabs" id="category-tabs"></div>
+      </div>
+
+      <div class="rail-grid-container">
+        <div class="rail-grid" id="preset-grid">
+          <p class="rail-empty">Upload a photo to preview all 108 presets on your image.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Stage (Center Canvas Viewport) -->
+    <section class="stage">
+      <div class="stage-frame" id="stage-frame">
+        <div class="dropzone" id="dropzone">
+          <div class="dropzone-icon">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+          <h3 class="dropzone-title">Drop your photo here</h3>
+          <p class="dropzone-sub">Supports JPEG, PNG, WEBP (up to 20MB)</p>
+          <label class="btn btn-primary dropzone-btn" for="file-input">Browse File</label>
+        </div>
+
+        <!-- Main Display Images -->
+        <div class="image-wrapper" id="image-wrapper" hidden>
+          <img id="main-image" alt="Edited photo preview">
+          <img id="original-image" alt="Original photo preview" class="compare-layer" hidden>
+          <div class="compare-badge" id="compare-badge" hidden>ORIGINAL PHOTO</div>
+        </div>
+
+        <!-- Stage Loading Indicator -->
+        <div class="stage-loading" id="stage-loading" hidden>
+          <div class="spinner-ring"></div>
+          <span class="loading-text" id="loading-text">Applying preset...</span>
+        </div>
+      </div>
+
+      <!-- Stage Bottom Toolbar -->
+      <div class="stage-toolbar" id="stage-toolbar" hidden>
+        <div class="toolbar-group">
+          <button class="tool-btn" id="rotate-left-btn" title="Rotate Left 90°">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          </button>
+          <button class="tool-btn" id="rotate-right-btn" title="Rotate Right 90°">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.13-9.36L23 10"/></svg>
+          </button>
+          <span class="tool-divider"></span>
+          <button class="tool-btn" id="flip-h-btn" title="Flip Horizontal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 16 22 12 17 8"/><polyline points="7 8 2 12 7 16"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+          </button>
+          <button class="tool-btn" id="flip-v-btn" title="Flip Vertical">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="8 17 12 22 16 17"/><polyline points="16 7 12 2 8 7"/><line x1="2" y1="12" x2="22" y2="12"/></svg>
+          </button>
+        </div>
+
+        <div class="toolbar-info">
+          <span class="preset-active-label" id="preset-active-label">No Preset Applied</span>
+        </div>
+
+        <div class="toolbar-group">
+          <button class="tool-btn text-tool-btn" id="reset-stage-btn" disabled title="Reset all adjustments to preset default (Keyboard: R)">
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <p class="stage-message" id="stage-message"></p>
+    </section>
+
+    <!-- Adjustment Panel (Right Sidebar) -->
+    <aside class="adjust-panel">
+      <div class="adjust-header">
+        <h2>Fine Tune</h2>
+        <button class="btn btn-ghost btn-small" id="reset-btn" disabled>Reset</button>
+      </div>
+
+      <div class="adjust-empty" id="adjust-empty">
+        <div class="adjust-empty-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </div>
+        <p>Select a preset to unlock slider controls for manual adjustment.</p>
+      </div>
+
+      <div class="adjust-controls" id="adjust-controls" hidden>
+
+        <!-- Light Section -->
+        <div class="control-section">
+          <div class="section-title">Light &amp; Contrast</div>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Brightness</span>
+              <span class="slider-value" id="val-brightness">1.00</span>
+            </div>
+            <input type="range" id="slider-brightness" min="0.4" max="1.8" step="0.01" value="1">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Contrast</span>
+              <span class="slider-value" id="val-contrast">1.00</span>
+            </div>
+            <input type="range" id="slider-contrast" min="0.4" max="1.8" step="0.01" value="1">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Fade (Shadow Lift)</span>
+              <span class="slider-value" id="val-fade">0.00</span>
+            </div>
+            <input type="range" id="slider-fade" min="0" max="1" step="0.01" value="0">
+          </label>
+        </div>
+
+        <!-- Color Section -->
+        <div class="control-section">
+          <div class="section-title">Color &amp; Tone</div>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Saturation</span>
+              <span class="slider-value" id="val-saturation">1.00</span>
+            </div>
+            <input type="range" id="slider-saturation" min="0" max="2" step="0.01" value="1">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Warmth</span>
+              <span class="slider-value" id="val-warmth">0.00</span>
+            </div>
+            <input type="range" id="slider-warmth" min="-1" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Tint (Green/Magenta)</span>
+              <span class="slider-value" id="val-tint">0.00</span>
+            </div>
+            <input type="range" id="slider-tint" min="-1" max="1" step="0.01" value="0">
+          </label>
+        </div>
+
+        <!-- Effects Section -->
+        <div class="control-section">
+          <div class="section-title">Film Effects</div>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Vignette</span>
+              <span class="slider-value" id="val-vignette">0.00</span>
+            </div>
+            <input type="range" id="slider-vignette" min="0" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Film Grain</span>
+              <span class="slider-value" id="val-grain">0.00</span>
+            </div>
+            <input type="range" id="slider-grain" min="0" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row toggle-row">
+            <span class="slider-label">Black &amp; White Mode</span>
+            <div class="switch">
+              <input type="checkbox" id="toggle-mono">
+              <span class="slider round"></span>
+            </div>
+          </label>
+        </div>
+
+      </div>
+    </aside>
+
+  </main>
+
+  <!-- Footer Keyboard Shortcuts Hint -->
+  <footer class="app-footer">
+    <div class="shortcuts-hint">
+      <span class="hint-item"><kbd>Space</kbd> Hold to compare original</span>
+      <span class="hint-item"><kbd>R</kbd> Reset sliders</span>
+      <span class="hint-item"><kbd>D</kbd> Download</span>
+    </div>
+  </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
