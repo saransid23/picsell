@@ -10,10 +10,10 @@ Built with **Python, Flask, NumPy, and Pillow**, Picsell provides real-time pres
 
 ## ✨ Features
 
-* 🎨 **108 Presets** across 9 categories  Film, Warm, Cool, Moody, Bright, Mono, Cinematic, Portrait & Nature
+* 🎨 **108 Presets** across 9 categories — Film, Warm, Cool, Moody, Bright, Mono, Cinematic, Portrait & Nature
 * ⚡ **Fast Processing** powered by vectorized NumPy operations
-* 🎛️ **Manual Adjustments** Brightness, Contrast, Saturation, Warmth, Tint, Vignette, Grain & Fade
-* 🔄 **Image Transformations** Rotate & Flip
+* 🎛️ **Manual Adjustments** — Brightness, Contrast, Saturation, Warmth, Tint, Vignette, Grain & Fade
+* 🔄 **Image Transformations** — Rotate & Flip
 * 👀 **Before / After Comparison**
 * ⌨️ **Keyboard Shortcuts** for a faster workflow
 * 📥 **High-Resolution JPEG Export** up to 3000px
@@ -22,16 +22,18 @@ Built with **Python, Flask, NumPy, and Pillow**, Picsell provides real-time pres
 
 ## 🛠️ Tech Stack
 
-**Frontend:** HTML · CSS · JavaScript
-**Backend:** Python · Flask
-**Image Processing:** NumPy · Pillow
+- **Frontend:** HTML5 · Vanilla CSS3 · Modern JavaScript (ES6+)
+- **Backend:** Python · Flask
+- **Image Processing Engine:** NumPy · Pillow
 
 ---
 
-## 📂 Structure
+## 📁 Project Structure
 
 ```text
 picsell/
+├── .gitignore
+├── README.md
 ├── backend/
 │   ├── app.py
 │   ├── engine.py
@@ -50,6 +52,5 @@ picsell/
 Make professional photo editing **fast, accessible, and enjoyable** without the complexity of traditional editing software.
 
 ---
-
 
 **Picsell — Edit Less. Create More.**

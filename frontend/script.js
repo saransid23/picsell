@@ -348,9 +348,9 @@
     }
 
     activePresetId = presetId;
-    presetActiveLabel.textContent = presetName || `Preset #${presetId}`;
+    const labelText = presetName || `Preset #${presetId}`;
+    presetActiveLabel.textContent = `${labelText} • Applying...`;
     renderPresetGrid();
-    setLoading(true, `Applying ${presetName || "preset"}...`);
     showMessage("");
 
     if (applyAbortController) {
@@ -387,10 +387,10 @@
       }
 
       displayEditedBlob(blob);
+      presetActiveLabel.textContent = labelText;
     } catch (err) {
       if (err.name !== "AbortError") showMessage(err.message);
-    } finally {
-      setLoading(false);
+      presetActiveLabel.textContent = labelText;
     }
   }
 
@@ -469,7 +469,6 @@
 
   async function applyWithOverrides() {
     if (!sessionId) return;
-    setLoading(true, "Updating photo...");
     showMessage("");
 
     if (applyAbortController) {
@@ -492,8 +491,6 @@
       displayEditedBlob(blob);
     } catch (err) {
       if (err.name !== "AbortError") showMessage(err.message);
-    } finally {
-      setLoading(false);
     }
   }
 
@@ -519,7 +516,6 @@
 
   async function transformImage(type, params) {
     if (!sessionId) return;
-    setLoading(true, "Transforming image...");
     showMessage("");
     try {
       const path = type === "rotate" ? "/api/transform/rotate" : "/api/transform/flip";
@@ -533,8 +529,6 @@
       await applyWithOverrides();
     } catch (err) {
       showMessage(err.message);
-    } finally {
-      setLoading(false);
     }
   }
 
