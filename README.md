@@ -10,7 +10,7 @@ Built with **Python, Flask, NumPy, and Pillow**, Picsell provides real-time pres
 
 ## ✨ Features
 
-* 🎨 **108 Presets** across 9 categories — Film, Warm, Cool, Moody, Bright, Mono, Cinematic, Portrait & Nature
+* 🎨 **108 Presets** across 9 categories  Film, Warm, Cool, Moody, Bright, Mono, Cinematic, Portrait & Nature
 * ⚡ **Fast Processing** powered by vectorized NumPy operations
 * 🎛️ **Manual Adjustments** — Brightness, Contrast, Saturation, Warmth, Tint, Vignette, Grain & Fade
 * 🔄 **Image Transformations** — Rotate & Flip
