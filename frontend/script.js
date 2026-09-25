@@ -63,8 +63,13 @@
     brightness: el("slider-brightness"),
     contrast: el("slider-contrast"),
     saturation: el("slider-saturation"),
+    vibrance: el("slider-vibrance"),
     warmth: el("slider-warmth"),
     tint: el("slider-tint"),
+    shadows_warmth: el("slider-shadows-warmth"),
+    shadows_tint: el("slider-shadows-tint"),
+    highlights_warmth: el("slider-highlights-warmth"),
+    highlights_tint: el("slider-highlights-tint"),
     vignette: el("slider-vignette"),
     grain: el("slider-grain"),
     fade: el("slider-fade"),
@@ -74,8 +79,13 @@
     brightness: el("val-brightness"),
     contrast: el("val-contrast"),
     saturation: el("val-saturation"),
+    vibrance: el("val-vibrance"),
     warmth: el("val-warmth"),
     tint: el("val-tint"),
+    shadows_warmth: el("val-shadows-warmth"),
+    shadows_tint: el("val-shadows-tint"),
+    highlights_warmth: el("val-highlights-warmth"),
+    highlights_tint: el("val-highlights-tint"),
     vignette: el("val-vignette"),
     grain: el("val-grain"),
     fade: el("val-fade"),
@@ -259,7 +269,18 @@
         });
         const data = await res.json();
         Object.assign(thumbCache, data);
-        renderPresetGrid();
+
+        // Update thumbnail images in-place without re-rendering the whole grid
+        for (const [pid, base64] of Object.entries(data)) {
+          const thumbBtn = presetGrid.querySelector(`[data-preset-id="${pid}"]`);
+          if (thumbBtn) {
+            const img = thumbBtn.querySelector("img");
+            if (img) {
+              img.src = `data:image/jpeg;base64,${base64}`;
+              img.classList.remove("thumb-placeholder");
+            }
+          }
+        }
       } catch (err) {
         if (err.name === "AbortError") break;
         showMessage(err.message);
@@ -350,7 +371,9 @@
     activePresetId = presetId;
     const labelText = presetName || `Preset #${presetId}`;
     presetActiveLabel.textContent = `${labelText} • Applying...`;
-    renderPresetGrid();
+    presetGrid.querySelectorAll(".preset-thumb").forEach((btn) => {
+      btn.classList.toggle("active", btn.getAttribute("data-preset-id") == presetId);
+    });
     showMessage("");
 
     if (applyAbortController) {
@@ -407,8 +430,13 @@
     const bright = values.brightness ?? 1;
     const cont = values.contrast ?? 1;
     const sat = values.saturation ?? 1;
+    const vib = values.vibrance ?? 0;
     const warm = values.warmth ?? 0;
     const t = values.tint ?? 0;
+    const shW = values.shadows_warmth ?? 0;
+    const shT = values.shadows_tint ?? 0;
+    const hlW = values.highlights_warmth ?? 0;
+    const hlT = values.highlights_tint ?? 0;
     const vig = values.vignette ?? 0;
     const gr = values.grain ?? 0;
     const fd = values.fade ?? 0;
@@ -416,8 +444,13 @@
     sliders.brightness.value = bright;
     sliders.contrast.value = cont;
     sliders.saturation.value = sat;
+    sliders.vibrance.value = vib;
     sliders.warmth.value = warm;
     sliders.tint.value = t;
+    sliders.shadows_warmth.value = shW;
+    sliders.shadows_tint.value = shT;
+    sliders.highlights_warmth.value = hlW;
+    sliders.highlights_tint.value = hlT;
     sliders.vignette.value = vig;
     sliders.grain.value = gr;
     sliders.fade.value = fd;
@@ -430,8 +463,13 @@
     sliderValues.brightness.textContent = parseFloat(sliders.brightness.value).toFixed(2);
     sliderValues.contrast.textContent = parseFloat(sliders.contrast.value).toFixed(2);
     sliderValues.saturation.textContent = parseFloat(sliders.saturation.value).toFixed(2);
+    sliderValues.vibrance.textContent = parseFloat(sliders.vibrance.value).toFixed(2);
     sliderValues.warmth.textContent = parseFloat(sliders.warmth.value).toFixed(2);
     sliderValues.tint.textContent = parseFloat(sliders.tint.value).toFixed(2);
+    sliderValues.shadows_warmth.textContent = parseFloat(sliders.shadows_warmth.value).toFixed(2);
+    sliderValues.shadows_tint.textContent = parseFloat(sliders.shadows_tint.value).toFixed(2);
+    sliderValues.highlights_warmth.textContent = parseFloat(sliders.highlights_warmth.value).toFixed(2);
+    sliderValues.highlights_tint.textContent = parseFloat(sliders.highlights_tint.value).toFixed(2);
     sliderValues.vignette.textContent = parseFloat(sliders.vignette.value).toFixed(2);
     sliderValues.grain.textContent = parseFloat(sliders.grain.value).toFixed(2);
     sliderValues.fade.textContent = parseFloat(sliders.fade.value).toFixed(2);
@@ -451,8 +489,13 @@
       brightness: parseFloat(sliders.brightness.value),
       contrast: parseFloat(sliders.contrast.value),
       saturation: parseFloat(sliders.saturation.value),
+      vibrance: parseFloat(sliders.vibrance.value),
       warmth: parseFloat(sliders.warmth.value),
       tint: parseFloat(sliders.tint.value),
+      shadows_warmth: parseFloat(sliders.shadows_warmth.value),
+      shadows_tint: parseFloat(sliders.shadows_tint.value),
+      highlights_warmth: parseFloat(sliders.highlights_warmth.value),
+      highlights_tint: parseFloat(sliders.highlights_tint.value),
       vignette: parseFloat(sliders.vignette.value),
       grain: parseFloat(sliders.grain.value),
       fade: parseFloat(sliders.fade.value),

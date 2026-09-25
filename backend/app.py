@@ -18,7 +18,7 @@ import engine
 FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend"))
 
 app = Flask(__name__, static_folder=FRONTEND_DIR, static_url_path="")
-executor = ThreadPoolExecutor(max_workers=8)
+executor = ThreadPoolExecutor(max_workers=16)
 
 
 @app.after_request

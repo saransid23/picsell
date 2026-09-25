@@ -213,7 +213,15 @@
 
           <label class="slider-row">
             <div class="slider-header">
-              <span class="slider-label">Warmth</span>
+              <span class="slider-label">Vibrance (Smart Saturation)</span>
+              <span class="slider-value" id="val-vibrance">0.00</span>
+            </div>
+            <input type="range" id="slider-vibrance" min="-1" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Overall Warmth</span>
               <span class="slider-value" id="val-warmth">0.00</span>
             </div>
             <input type="range" id="slider-warmth" min="-1" max="1" step="0.01" value="0">
@@ -221,10 +229,47 @@
 
           <label class="slider-row">
             <div class="slider-header">
-              <span class="slider-label">Tint (Green/Magenta)</span>
+              <span class="slider-label">Overall Tint (Green/Magenta)</span>
               <span class="slider-value" id="val-tint">0.00</span>
             </div>
             <input type="range" id="slider-tint" min="-1" max="1" step="0.01" value="0">
+          </label>
+        </div>
+
+        <!-- Color Grading / Split Toning Section -->
+        <div class="control-section">
+          <div class="section-title">🎨 Color Grading (Split Toning)</div>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Shadows Tone (Cool/Warm)</span>
+              <span class="slider-value" id="val-shadows-warmth">0.00</span>
+            </div>
+            <input type="range" id="slider-shadows-warmth" min="-1" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Shadows Tint (Green/Magenta)</span>
+              <span class="slider-value" id="val-shadows-tint">0.00</span>
+            </div>
+            <input type="range" id="slider-shadows-tint" min="-1" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Highlights Tone (Cool/Warm)</span>
+              <span class="slider-value" id="val-highlights-warmth">0.00</span>
+            </div>
+            <input type="range" id="slider-highlights-warmth" min="-1" max="1" step="0.01" value="0">
+          </label>
+
+          <label class="slider-row">
+            <div class="slider-header">
+              <span class="slider-label">Highlights Tint (Green/Magenta)</span>
+              <span class="slider-value" id="val-highlights-tint">0.00</span>
+            </div>
+            <input type="range" id="slider-highlights-tint" min="-1" max="1" step="0.01" value="0">
           </label>
         </div>
 

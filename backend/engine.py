@@ -68,6 +68,37 @@ def apply_adjustments(img, adjustments):
         arr[:, :, 1] += -tint * 20.0
         arr[:, :, 2] += -warmth * 30.0 + tint * 10.0
 
+    # 5b. Color Grading / Split Toning (Shadows & Highlights Toning)
+    sh_warmth = adjustments.get("shadows_warmth", 0.0)
+    sh_tint = adjustments.get("shadows_tint", 0.0)
+    hl_warmth = adjustments.get("highlights_warmth", 0.0)
+    hl_tint = adjustments.get("highlights_tint", 0.0)
+
+    if sh_warmth != 0 or sh_tint != 0 or hl_warmth != 0 or hl_tint != 0:
+        lum = (arr[:, :, 0] * 0.299 + arr[:, :, 1] * 0.587 + arr[:, :, 2] * 0.114) / 255.0
+        s_mask = np.square(1.0 - lum)
+        h_mask = np.square(lum)
+
+        if sh_warmth != 0 or sh_tint != 0:
+            arr[:, :, 0] += (sh_warmth * 35.0 + sh_tint * 15.0) * s_mask
+            arr[:, :, 1] += (-sh_tint * 25.0) * s_mask
+            arr[:, :, 2] += (-sh_warmth * 35.0 + sh_tint * 15.0) * s_mask
+
+        if hl_warmth != 0 or hl_tint != 0:
+            arr[:, :, 0] += (hl_warmth * 35.0 + hl_tint * 15.0) * h_mask
+            arr[:, :, 1] += (-hl_tint * 25.0) * h_mask
+            arr[:, :, 2] += (-hl_warmth * 35.0 + hl_tint * 15.0) * h_mask
+
+    # 5c. Vibrance (Smart Saturation)
+    vibrance = adjustments.get("vibrance", 0.0)
+    if vibrance != 0.0 and not adjustments.get("mono"):
+        max_c = np.maximum(np.maximum(arr[:, :, 0], arr[:, :, 1]), arr[:, :, 2])
+        min_c = np.minimum(np.minimum(arr[:, :, 0], arr[:, :, 1]), arr[:, :, 2])
+        sat_mask = (max_c - min_c) / (max_c + 1e-5)
+        vib_factor = 1.0 + vibrance * (1.0 - sat_mask)
+        gray = arr[:, :, 0] * 0.299 + arr[:, :, 1] * 0.587 + arr[:, :, 2] * 0.114
+        arr = gray[:, :, np.newaxis] * (1.0 - vib_factor[:, :, np.newaxis]) + arr * vib_factor[:, :, np.newaxis]
+
     # 6. Fade (shadow lift)
     fade = adjustments.get("fade", 0.0)
     if fade > 0:
@@ -117,7 +148,7 @@ def image_to_bytes(img, fmt="JPEG", quality=75):
     return buf.getvalue()
 
 
-def make_thumbnail(img, size=120):
+def make_thumbnail(img, size=100):
     thumb = img.copy()
     thumb.thumbnail((size, size), Image.BOX)
     return thumb
