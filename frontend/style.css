@@ -927,3 +927,112 @@ kbd {
   font-size: 0.68rem;
   font-weight: 700;
 }
+
+/* ---------- Tone Curve & Pro Color Grading Styles ---------- */
+.section-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.btn-xs {
+  padding: 3px 8px;
+  font-size: 0.7rem;
+}
+
+.curve-channels {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.curve-tab {
+  flex: 1;
+  padding: 4px 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
+  background: var(--bg-app);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.curve-tab:hover {
+  background: #ffffff;
+  color: var(--text-primary);
+}
+
+.curve-tab.active {
+  background: var(--text-primary);
+  color: #ffffff;
+  border-color: var(--text-primary);
+}
+
+.curve-tab.tab-red.active { background: #ef4444; border-color: #ef4444; }
+.curve-tab.tab-green.active { background: #10b981; border-color: #10b981; }
+.curve-tab.tab-blue.active { background: #3b82f6; border-color: #3b82f6; }
+
+.curve-graph-box {
+  background: #0f172a;
+  border-radius: var(--radius-md);
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.3);
+}
+
+#curve-canvas {
+  width: 100%;
+  height: 160px;
+  border-radius: 4px;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.curve-hint {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.curve-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.chip-btn {
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.chip-btn:hover {
+  background: var(--accent-primary);
+  color: #ffffff;
+  border-color: var(--accent-primary);
+}
+
+.sub-group-title {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-primary);
+  margin: 12px 0 6px 0;
+  padding-bottom: 3px;
+  border-bottom: 1px dashed var(--border-color);
+}

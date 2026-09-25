@@ -68,28 +68,53 @@ def apply_adjustments(img, adjustments):
         arr[:, :, 1] += -tint * 20.0
         arr[:, :, 2] += -warmth * 30.0 + tint * 10.0
 
-    # 5b. Color Grading / Split Toning (Shadows & Highlights Toning)
+    # 5b. Color Grading / 3-Way Split Toning (Shadows, Midtones, Highlights)
     sh_warmth = adjustments.get("shadows_warmth", 0.0)
     sh_tint = adjustments.get("shadows_tint", 0.0)
+    mid_warmth = adjustments.get("midtones_warmth", 0.0)
+    mid_tint = adjustments.get("midtones_tint", 0.0)
     hl_warmth = adjustments.get("highlights_warmth", 0.0)
     hl_tint = adjustments.get("highlights_tint", 0.0)
 
-    if sh_warmth != 0 or sh_tint != 0 or hl_warmth != 0 or hl_tint != 0:
+    if any([sh_warmth, sh_tint, mid_warmth, mid_tint, hl_warmth, hl_tint]):
         lum = (arr[:, :, 0] * 0.299 + arr[:, :, 1] * 0.587 + arr[:, :, 2] * 0.114) / 255.0
         s_mask = np.square(1.0 - lum)
         h_mask = np.square(lum)
+        m_mask = np.clip(1.0 - s_mask - h_mask, 0.0, 1.0)
 
         if sh_warmth != 0 or sh_tint != 0:
             arr[:, :, 0] += (sh_warmth * 35.0 + sh_tint * 15.0) * s_mask
             arr[:, :, 1] += (-sh_tint * 25.0) * s_mask
             arr[:, :, 2] += (-sh_warmth * 35.0 + sh_tint * 15.0) * s_mask
 
+        if mid_warmth != 0 or mid_tint != 0:
+            arr[:, :, 0] += (mid_warmth * 35.0 + mid_tint * 15.0) * m_mask
+            arr[:, :, 1] += (-mid_tint * 25.0) * m_mask
+            arr[:, :, 2] += (-mid_warmth * 35.0 + mid_tint * 15.0) * m_mask
+
         if hl_warmth != 0 or hl_tint != 0:
             arr[:, :, 0] += (hl_warmth * 35.0 + hl_tint * 15.0) * h_mask
             arr[:, :, 1] += (-hl_tint * 25.0) * h_mask
             arr[:, :, 2] += (-hl_warmth * 35.0 + hl_tint * 15.0) * h_mask
 
-    # 5c. Vibrance (Smart Saturation)
+    # 5c. Tone Curves LUT Engine (RGB, Red, Green, Blue Curves)
+    curves = adjustments.get("curves")
+    if curves and isinstance(curves, dict):
+        x_nodes = np.array([0, 64, 128, 192, 255], dtype=np.float32)
+        if "rgb" in curves and len(curves["rgb"]) == 5:
+            y_nodes = np.array(curves["rgb"], dtype=np.float32)
+            lut_rgb = np.clip(np.interp(np.arange(256), x_nodes, y_nodes), 0, 255).astype(np.uint8)
+            arr_uint8 = np.clip(arr, 0, 255).astype(np.uint8)
+            arr = lut_rgb[arr_uint8].astype(np.float32)
+
+        for i, ch in enumerate(["r", "g", "b"]):
+            if ch in curves and len(curves[ch]) == 5:
+                y_nodes = np.array(curves[ch], dtype=np.float32)
+                lut_ch = np.clip(np.interp(np.arange(256), x_nodes, y_nodes), 0, 255).astype(np.uint8)
+                ch_uint8 = np.clip(arr[:, :, i], 0, 255).astype(np.uint8)
+                arr[:, :, i] = lut_ch[ch_uint8].astype(np.float32)
+
+    # 5d. Vibrance (Smart Saturation)
     vibrance = adjustments.get("vibrance", 0.0)
     if vibrance != 0.0 and not adjustments.get("mono"):
         max_c = np.maximum(np.maximum(arr[:, :, 0], arr[:, :, 1]), arr[:, :, 2])

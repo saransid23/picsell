@@ -68,6 +68,8 @@
     tint: el("slider-tint"),
     shadows_warmth: el("slider-shadows-warmth"),
     shadows_tint: el("slider-shadows-tint"),
+    midtones_warmth: el("slider-midtones-warmth"),
+    midtones_tint: el("slider-midtones-tint"),
     highlights_warmth: el("slider-highlights-warmth"),
     highlights_tint: el("slider-highlights-tint"),
     vignette: el("slider-vignette"),
@@ -84,6 +86,8 @@
     tint: el("val-tint"),
     shadows_warmth: el("val-shadows-warmth"),
     shadows_tint: el("val-shadows-tint"),
+    midtones_warmth: el("val-midtones-warmth"),
+    midtones_tint: el("val-midtones-tint"),
     highlights_warmth: el("val-highlights-warmth"),
     highlights_tint: el("val-highlights-tint"),
     vignette: el("val-vignette"),
@@ -494,12 +498,15 @@
       tint: parseFloat(sliders.tint.value),
       shadows_warmth: parseFloat(sliders.shadows_warmth.value),
       shadows_tint: parseFloat(sliders.shadows_tint.value),
+      midtones_warmth: parseFloat(sliders.midtones_warmth.value),
+      midtones_tint: parseFloat(sliders.midtones_tint.value),
       highlights_warmth: parseFloat(sliders.highlights_warmth.value),
       highlights_tint: parseFloat(sliders.highlights_tint.value),
       vignette: parseFloat(sliders.vignette.value),
       grain: parseFloat(sliders.grain.value),
       fade: parseFloat(sliders.fade.value),
       mono: monoToggle.checked,
+      curves: getCurvesPayload(),
     };
   }
 
@@ -641,6 +648,203 @@
     } finally {
       setLoading(false);
     }
+  }
+
+  // ---------- Tone Curve Graph Studio ----------
+  let curveChannel = "rgb";
+  const curveNodes = {
+    rgb: [0, 64, 128, 192, 255],
+    r: [0, 64, 128, 192, 255],
+    g: [0, 64, 128, 192, 255],
+    b: [0, 64, 128, 192, 255]
+  };
+
+  const curveCanvas = el("curve-canvas");
+  const curveCtx = curveCanvas ? curveCanvas.getContext("2d") : null;
+  let activeNodeIndex = -1;
+
+  const channelColors = {
+    rgb: { stroke: "#6366f1", fill: "rgba(99, 102, 241, 0.18)", node: "#818cf8" },
+    r: { stroke: "#ef4444", fill: "rgba(239, 68, 68, 0.18)", node: "#f87171" },
+    g: { stroke: "#10b981", fill: "rgba(16, 185, 129, 0.18)", node: "#34d399" },
+    b: { stroke: "#3b82f6", fill: "rgba(59, 130, 246, 0.18)", node: "#60a5fa" }
+  };
+
+  function getCurvesPayload() {
+    return curveNodes;
+  }
+
+  function drawCurveGraph() {
+    if (!curveCanvas || !curveCtx) return;
+    const w = curveCanvas.width;
+    const h = curveCanvas.height;
+    const padding = 12;
+    const gw = w - padding * 2;
+    const gh = h - padding * 2;
+
+    curveCtx.clearRect(0, 0, w, h);
+
+    // Grid (4x4)
+    curveCtx.strokeStyle = "#1e293b";
+    curveCtx.lineWidth = 1;
+    for (let i = 0; i <= 4; i++) {
+      const x = padding + (gw / 4) * i;
+      const y = padding + (gh / 4) * i;
+      curveCtx.beginPath(); curveCtx.moveTo(x, padding); curveCtx.lineTo(x, h - padding); curveCtx.stroke();
+      curveCtx.beginPath(); curveCtx.moveTo(padding, y); curveCtx.lineTo(w - padding, y); curveCtx.stroke();
+    }
+
+    // 45 deg diagonal line
+    curveCtx.strokeStyle = "#334155";
+    curveCtx.setLineDash([4, 4]);
+    curveCtx.beginPath();
+    curveCtx.moveTo(padding, h - padding);
+    curveCtx.lineTo(w - padding, padding);
+    curveCtx.stroke();
+    curveCtx.setLineDash([]);
+
+    // Nodes
+    const nodes = curveNodes[curveChannel];
+    const colors = channelColors[curveChannel];
+
+    const points = nodes.map((val, idx) => ({
+      x: padding + (gw / 4) * idx,
+      y: h - padding - (val / 255) * gh
+    }));
+
+    // Spline curve
+    curveCtx.beginPath();
+    curveCtx.moveTo(points[0].x, points[0].y);
+
+    for (let i = 0; i < points.length - 1; i++) {
+      const xc = (points[i].x + points[i + 1].x) / 2;
+      const yc = (points[i].y + points[i + 1].y) / 2;
+      curveCtx.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
+    }
+    curveCtx.lineTo(points[points.length - 1].x, points[points.length - 1].y);
+
+    curveCtx.strokeStyle = colors.stroke;
+    curveCtx.lineWidth = 2.5;
+    curveCtx.stroke();
+
+    // Fill area under curve
+    curveCtx.lineTo(w - padding, h - padding);
+    curveCtx.lineTo(padding, h - padding);
+    curveCtx.closePath();
+    curveCtx.fillStyle = colors.fill;
+    curveCtx.fill();
+
+    // Draw handles
+    points.forEach((pt, idx) => {
+      curveCtx.beginPath();
+      curveCtx.arc(pt.x, pt.y, idx === activeNodeIndex ? 7 : 5, 0, Math.PI * 2);
+      curveCtx.fillStyle = colors.node;
+      curveCtx.fill();
+      curveCtx.lineWidth = 2;
+      curveCtx.strokeStyle = "#ffffff";
+      curveCtx.stroke();
+    });
+  }
+
+  if (curveCanvas) {
+    drawCurveGraph();
+
+    function getCanvasCoords(e) {
+      const rect = curveCanvas.getBoundingClientRect();
+      const scaleX = curveCanvas.width / rect.width;
+      const scaleY = curveCanvas.height / rect.height;
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      };
+    }
+
+    curveCanvas.addEventListener("mousedown", (e) => {
+      const { x, y } = getCanvasCoords(e);
+      const padding = 12;
+      const gw = curveCanvas.width - padding * 2;
+      const gh = curveCanvas.height - padding * 2;
+      const nodes = curveNodes[curveChannel];
+
+      let closestIdx = -1;
+      let minDist = 22;
+
+      nodes.forEach((val, idx) => {
+        const nx = padding + (gw / 4) * idx;
+        const ny = curveCanvas.height - padding - (val / 255) * gh;
+        const dist = Math.hypot(x - nx, y - ny);
+        if (dist < minDist) {
+          minDist = dist;
+          closestIdx = idx;
+        }
+      });
+
+      if (closestIdx !== -1) {
+        activeNodeIndex = closestIdx;
+        drawCurveGraph();
+      }
+    });
+
+    window.addEventListener("mousemove", (e) => {
+      if (activeNodeIndex === -1) return;
+      const { y } = getCanvasCoords(e);
+      const padding = 12;
+      const gh = curveCanvas.height - padding * 2;
+      const clampedY = Math.max(padding, Math.min(curveCanvas.height - padding, y));
+      const val = Math.round(((curveCanvas.height - padding - clampedY) / gh) * 255);
+
+      curveNodes[curveChannel][activeNodeIndex] = val;
+      drawCurveGraph();
+      scheduleApplyWithOverrides();
+    });
+
+    window.addEventListener("mouseup", () => {
+      if (activeNodeIndex !== -1) {
+        activeNodeIndex = -1;
+        drawCurveGraph();
+      }
+    });
+  }
+
+  const curveChannelsEl = el("curve-channels");
+  if (curveChannelsEl) {
+    curveChannelsEl.querySelectorAll(".curve-tab").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        curveChannelsEl.querySelectorAll(".curve-tab").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        curveChannel = btn.getAttribute("data-channel") || "rgb";
+        drawCurveGraph();
+      });
+    });
+  }
+
+  document.querySelectorAll("[data-curve-preset]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const type = btn.getAttribute("data-curve-preset");
+      const presets = {
+        linear: [0, 64, 128, 192, 255],
+        scurve: [0, 48, 128, 208, 255],
+        matte: [28, 72, 128, 192, 255],
+        punchy: [0, 36, 128, 220, 255]
+      };
+      if (presets[type]) {
+        curveNodes[curveChannel] = [...presets[type]];
+        drawCurveGraph();
+        scheduleApplyWithOverrides();
+      }
+    });
+  });
+
+  const curveResetBtn = el("curve-reset-btn");
+  if (curveResetBtn) {
+    curveResetBtn.addEventListener("click", () => {
+      curveNodes.rgb = [0, 64, 128, 192, 255];
+      curveNodes.r = [0, 64, 128, 192, 255];
+      curveNodes.g = [0, 64, 128, 192, 255];
+      curveNodes.b = [0, 64, 128, 192, 255];
+      drawCurveGraph();
+      scheduleApplyWithOverrides();
+    });
   }
 
   function escapeHTML(str) {
