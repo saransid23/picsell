@@ -1,32 +1,48 @@
+<div align="center">
+
 # 📸 Picsell
 
 ### Professional Photo Preset Studio
 
-**Picsell** is a modern, high-performance photo editing studio that brings professional preset-based editing into a simple and intuitive web interface.
+<img src="https://readme-typing-svg.demolab.com/?lines=108+presets.+9+categories.;Preview+live.+Tweak+freely.;Edit+Less.+Create+More.&amp;center=true&amp;width=420&amp;height=35&amp;color=F59E0B&amp;vCenter=true&amp;size=18" />
 
-Built with **Python, Flask, NumPy, and Pillow**, Picsell provides real-time preset previews, manual adjustments, image transformations, and high-resolution exports.
+<img src="https://img.shields.io/badge/presets-108-F59E0B?style=flat-square" />
+<img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" />
+<img src="https://img.shields.io/badge/Flask-000000?style=flat-square&amp;logo=flask&amp;logoColor=white" />
+<img src="https://img.shields.io/badge/NumPy-013243?style=flat-square&amp;logo=numpy&amp;logoColor=white" />
+<img src="https://img.shields.io/badge/Pillow-3776AB?style=flat-square&amp;logo=python&amp;logoColor=white" />
 
----
+</div>
+
+<br>
+
+**Picsell** is a modern, high-performance photo editing studio that brings professional preset-based editing into a simple, intuitive web interface. Built with **Python, Flask, NumPy and Pillow**, it offers real-time preset previews, manual adjustments, image transformations and high-resolution exports.
+
+<br>
 
 ## ✨ Features
 
-* 🎨 **108 Presets** across 9 categories Film, Warm, Cool, Moody, Bright, Mono, Cinematic, Portrait & Nature
-* ⚡ **Fast Processing** powered by vectorized NumPy operations
-* 🎛️ **Manual Adjustments** Brightness, Contrast, Saturation, Warmth, Tint, Vignette, Grain & Fade
-* 🔄 **Image Transformations** Rotate & Flip
-* 👀 **Before / After Comparison**
-* ⌨️ **Keyboard Shortcuts** for a faster workflow
-* 📥 **High-Resolution JPEG Export** up to 3000px
+| | Feature | What it does |
+|:---:|---|---|
+| 🎨 | **108 Presets** | Across 9 categories: Film, Warm, Cool, Moody, Bright, Mono, Cinematic, Portrait and Nature |
+| ⚡ | **Fast Processing** | Powered by vectorized NumPy operations |
+| 🎛️ | **Manual Adjustments** | Brightness, Contrast, Saturation, Warmth, Tint, Vignette, Grain and Fade |
+| 🔄 | **Image Transformations** | Rotate and Flip |
+| 👀 | **Before / After Comparison** | Check your edit against the original |
+| ⌨️ | **Keyboard Shortcuts** | A faster editing workflow |
+| 📥 | **High-Res JPEG Export** | Up to 3000px |
 
----
+<br>
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** HTML5 · Vanilla CSS3 · Modern JavaScript (ES6+)
-- **Backend:** Python · Flask
-- **Image Processing Engine:** NumPy · Pillow
+| Layer | Technology |
+|---|---|
+| **Frontend** | HTML5 · Vanilla CSS3 · Modern JavaScript (ES6+) |
+| **Backend** | Python · Flask |
+| **Image Processing** | NumPy · Pillow |
 
----
+<br>
 
 ## 📁 Project Structure
 
@@ -45,12 +61,16 @@ picsell/
     └── style.css
 ```
 
----
+<br>
 
 ## 🎯 Vision
 
 Make professional photo editing **fast, accessible, and enjoyable** without the complexity of traditional editing software.
 
----
+<br>
 
-**Picsell — Edit Less. Create More.**
+<div align="center">
+
+**Picsell: Edit Less. Create More.**
+
+</div>
